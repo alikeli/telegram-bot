@@ -1,4 +1,4 @@
-package pro.sky.telegrambot.Entity;
+package pro.sky.telegrambot.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,10 +18,19 @@ public class NotificationTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long Id;
-    private Long chatId;
+    private  Integer chatId;
     private String userName;
     private String message;
     private LocalDateTime DateToSend;
+
+    public NotificationTask(String message, LocalDateTime dateToSend) {
+        this.message = message;
+        DateToSend = dateToSend;
+    }
+
+    public NotificationTask() {
+
+    }
 
     @Override
     public String toString() {
