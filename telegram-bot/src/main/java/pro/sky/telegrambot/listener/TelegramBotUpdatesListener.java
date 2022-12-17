@@ -6,6 +6,9 @@ import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
 
 import com.pengrad.telegrambot.model.botcommandscope.BotCommandScopeDefault;
+import com.pengrad.telegrambot.model.request.Keyboard;
+import com.pengrad.telegrambot.model.request.KeyboardButton;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import com.pengrad.telegrambot.response.SendResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -33,17 +36,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         this.notificationTaskRepository = notificationTaskRepository;
         this.telegramBot = telegramBot;
         this.notificationService = notificationService;
-        List<BotCommand> listofCommands = new ArrayList<>();
-        listofCommands.add(new BotCommand("/start", "get a welcome message"));
-        listofCommands.add(new BotCommand("/deletemessage", "delete my message"));
-        listofCommands.add(new BotCommand("/help", "info how to use this bot"));
-
-//        try {
-//            this.execute(new SetMyCommands(listofCommands, new BotCommandScopeDefault(), null));
-//        } catch (TelegramApiException e) {
-//            log.error("Error setting bot's command list :" + e.getMessage());
-//        }
-
     }
 
     @PostConstruct

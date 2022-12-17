@@ -27,6 +27,7 @@ public class NotificationService {
         this.notificationsRepository = notificationsRepository;
 
     }
+
     public void startCommandReceived(long chatId, String name) {
         String answer = "Hi, " + name + "! Nice to meet you!";
         log.info("Replied to user " + name);
@@ -34,7 +35,7 @@ public class NotificationService {
 
     }
 
-   public void registerUser(Message message) {
+    public void registerUser(Message message) {
         if (notificationsRepository.findById(message.chat().id()).isEmpty()) {
             var chatId = message.chat().id();
             var chat = message.chat();
