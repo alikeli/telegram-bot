@@ -17,12 +17,12 @@ import java.util.List;
 @Slf4j
 public class TelegramBotUpdatesListener implements UpdatesListener {
     static final String HELP_TEXT = "Telegram-bot for remind about your homework.\n" + "The format is 01.01.2022 20:00 You have to do homework";
-   // private final NotificationTaskRepository notificationTaskRepository;  //проверить
+    // private final NotificationTaskRepository notificationTaskRepository;  //проверить
 
     private final TelegramBot telegramBot;
     private final NotificationService notificationService;
 
-    public TelegramBotUpdatesListener( TelegramBot telegramBot, NotificationService notificationService) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, NotificationService notificationService) {
 
         this.telegramBot = telegramBot;
         this.notificationService = notificationService;
@@ -50,12 +50,21 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 case "/help":
                     notificationService.sendMessage(chatId, HELP_TEXT);
                     break;
+                case "/tasks":
+                    List<NotificationTask> notificationsList2 = notificationService.getListOfAllNotification(update);
+                                        notificationService.makeNotification(notificationsList2)
+                            .forEach(n -> {
+                                SendResponse response2 = telegramBot.execute(n);
+                                System.out.println(response2.isOk());
+                                System.out.println(response2.errorCode());
+                            });
+                    break;
                 case "/deletemessage":
-                    //  deleteMessage(chatId);
+                    notificationService.deleteNotifications(update);
                     break;
 
                 default:
-                    notificationService.sendMessage(chatId, "Sorry, command wasn't recognized");
+                    telegramBot.execute(notificationService.giveReport(update));
 
             }
 
@@ -65,18 +74,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     @Scheduled(cron = "0 0/1 * * * *")
-    // раз в минуту выполнятеся
+    // once a minute
     public int notifies() {
-        // сначала проеряет имеются ли в БД напоминания на эту минуту - вернет список напоминаний,
-        // если такие есть
+
         List<NotificationTask> notificationsList = notificationService.checkCurrentNotifications();
-        // если список непустой - вызывается метод makeNotification, который возвращает List<SendMessage>
-        // который несет id чата (кому это сообщение нужно отправить) и текст сообщения,
-        // который нужно отправить
+
         if (!notificationsList.isEmpty()) {
             notificationService.makeNotification(notificationsList)
                     .forEach(n -> {
-                        // передаю SendMessage в .execute() - метод = сообщение отправлено в нужный чат
+
                         SendResponse response = telegramBot.execute(n);
                         System.out.println(response.isOk());
                         System.out.println(response.errorCode());

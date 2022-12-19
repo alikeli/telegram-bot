@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -23,14 +24,7 @@ public class NotificationTask {
     private String message;
     private LocalDateTime DateToSend;
 
-    public NotificationTask(String message, LocalDateTime dateToSend) {
-        this.message = message;
-        DateToSend = dateToSend;
-    }
 
-    public NotificationTask() {
-
-    }
 
     @Override
     public String toString() {
@@ -41,5 +35,18 @@ public class NotificationTask {
                 ", message='" + message + '\'' +
                 ", DateToSend=" + DateToSend +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NotificationTask)) return false;
+        NotificationTask that = (NotificationTask) o;
+        return Objects.equals(chatId, that.chatId) && Objects.equals(message, that.message) && Objects.equals(DateToSend, that.DateToSend) && Objects.equals(userName, that.userName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Id, chatId, userName, message, DateToSend);
     }
 }
