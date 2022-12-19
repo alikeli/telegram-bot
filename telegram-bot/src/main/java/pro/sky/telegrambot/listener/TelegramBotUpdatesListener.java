@@ -52,12 +52,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     break;
                 case "/tasks":
                     List<NotificationTask> notificationsList2 = notificationService.getListOfAllNotification(update);
-                                        notificationService.makeNotification(notificationsList2)
-                            .forEach(n -> {
-                                SendResponse response2 = telegramBot.execute(n);
-                                System.out.println(response2.isOk());
-                                System.out.println(response2.errorCode());
-                            });
+                    notificationService.makeNotification(notificationsList2).forEach(n -> {
+                        SendResponse response2 = telegramBot.execute(n);
+                        System.out.println(response2.isOk());
+                        System.out.println(response2.errorCode());
+                    });
                     break;
                 case "/deletemessage":
                     notificationService.deleteNotifications(update);
@@ -80,13 +79,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         List<NotificationTask> notificationsList = notificationService.checkCurrentNotifications();
 
         if (!notificationsList.isEmpty()) {
-            notificationService.makeNotification(notificationsList)
-                    .forEach(n -> {
+            notificationService.makeNotification(notificationsList).forEach(n -> {
 
-                        SendResponse response = telegramBot.execute(n);
-                        System.out.println(response.isOk());
-                        System.out.println(response.errorCode());
-                    });
+                SendResponse response = telegramBot.execute(n);
+                System.out.println(response.isOk());
+                System.out.println(response.errorCode());
+            });
             log.info("выполнился метод notifies");
         }
         return UpdatesListener.CONFIRMED_UPDATES_ALL;

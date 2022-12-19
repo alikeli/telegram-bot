@@ -1,6 +1,6 @@
 package pro.sky.telegrambot.exeption;
 
-public class TextPatternDoesNotMatchException extends RuntimeException{
+public class TextPatternDoesNotMatchException extends RuntimeException {
     public TextPatternDoesNotMatchException() {
     }
 

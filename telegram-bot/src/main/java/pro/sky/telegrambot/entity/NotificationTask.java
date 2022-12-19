@@ -19,22 +19,15 @@ public class NotificationTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long Id;
-    private  long chatId;
+    private long chatId;
     private String userName;
     private String message;
     private LocalDateTime DateToSend;
 
 
-
     @Override
     public String toString() {
-        return "NotificationTask{" +
-                "Id=" + Id +
-                ", chatId=" + chatId +
-                ", userName='" + userName + '\'' +
-                ", message='" + message + '\'' +
-                ", DateToSend=" + DateToSend +
-                '}';
+        return "NotificationTask{" + "Id=" + Id + ", chatId=" + chatId + ", userName='" + userName + '\'' + ", message='" + message + '\'' + ", DateToSend=" + DateToSend + '}';
     }
 
     @Override

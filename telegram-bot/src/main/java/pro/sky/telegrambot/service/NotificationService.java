@@ -69,7 +69,7 @@ public class NotificationService {
     }
 
     // save reminder to db
-    public NotificationTask saveNotificationToDB(Update update) throws DateTimeParseException, TextPatternDoesNotMatchException{
+    public NotificationTask saveNotificationToDB(Update update) throws DateTimeParseException, TextPatternDoesNotMatchException {
         NotificationTask notificationTask = parsMessage(update);
         LocalDateTime current = LocalDateTime.now();
 
@@ -142,8 +142,7 @@ public class NotificationService {
             String date = matcher.group(1);
 
 
-
-            notificationTask.setDateToSend(LocalDateTime.parse(date,  DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")));
+            notificationTask.setDateToSend(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")));
             String message = matcher.group(3);
             notificationTask.setMessage(message);
             notificationTask.setChatId(chatId);
@@ -156,7 +155,6 @@ public class NotificationService {
 
     }
 
-
     // checking reminders at the moment
     public List<NotificationTask> checkCurrentNotifications() {
 
@@ -166,12 +164,10 @@ public class NotificationService {
         return notificationTaskRepository.findAll().stream().filter(n -> n.getDateToSend().equals(currentMoment)).collect(Collectors.toList());
     }
 
-
     public void deleteNotifications(Update update) {
         long idChat = update.message().chat().id();
 
-        List<NotificationTask> temporaryListNotifications = notificationTaskRepository.findAll().stream()
-                .filter(n -> Objects.equals(n.getChatId(), idChat)).collect(Collectors.toList());
+        List<NotificationTask> temporaryListNotifications = notificationTaskRepository.findAll().stream().filter(n -> Objects.equals(n.getChatId(), idChat)).collect(Collectors.toList());
         notificationTaskRepository.deleteAll();
         notificationTaskRepository.saveAll(temporaryListNotifications);
 
