@@ -1,27 +1,25 @@
 package pro.sky.telegrambot.service;
 
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.entity.NotificationTask;
-import pro.sky.telegrambot.exeption.TextPatternDoesNotMatchException;
+//import pro.sky.telegrambot.exeption.TextPatternDoesNotMatchException;
 import pro.sky.telegrambot.repository.NotificationTaskRepository;
 
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static java.time.format.DateTimeFormatter.ofPattern;
 
 @Service
 @Slf4j
@@ -37,6 +35,8 @@ public class NotificationService {
 
     }
 
+    Pattern pattern = Pattern.compile("([0-9\\.\\:\\s]{16})(\\s)([a-zA-Z0-9\\W+]+)");
+
     //response to /start command
     public void startCommandReceived(long chatId, String name) {
         String answer = "Hi, " + name + "! Nice to meet you!" + " I'm waiting for format like this: " + " DD.MM.YYYY HH:MM TEXT_NOTIFICATION";
@@ -45,21 +45,7 @@ public class NotificationService {
         sendMessage(chatId, answer);
 
     }
-    //register the user
 
-    public void registerUser(Message message) {
-        if (notificationTaskRepository.findById(message.chat().id()).isEmpty()) {
-            var chatId = message.chat().id();
-            var chat = message.chat();
-            NotificationTask notificationTask = new NotificationTask();
-            notificationTask.setChatId(Math.toIntExact(chatId)); //разобраться
-            notificationTask.setUserName(chat.username());
-            notificationTask.setMessage(String.valueOf(chat.pinnedMessage()));  //непонятно
-            notificationTask.setDateToSend(LocalDateTime.now());
-            notificationTaskRepository.save(notificationTask);
-            log.info("message saved : " + chat.username());
-        }
-    }
 
     // send message
     public void sendMessage(long chatId, String textToSend) {
@@ -69,7 +55,9 @@ public class NotificationService {
     }
 
     // save reminder to db
-    public NotificationTask saveNotificationToDB(Update update) throws DateTimeParseException, TextPatternDoesNotMatchException {
+    public NotificationTask saveNotificationToDB(Update update)
+    //  throws DateTimeParseException, TextPatternDoesNotMatchException
+    {
         NotificationTask notificationTask = parsMessage(update);
         LocalDateTime current = LocalDateTime.now();
 
@@ -87,8 +75,8 @@ public class NotificationService {
     }
 
     //check the same reminder in the database
-    public Boolean notificationIsUnique(NotificationTask notificationTask) {
-        if (notificationTaskRepository.findAll().contains(notificationTask)) {
+    public boolean notificationIsUnique(NotificationTask notificationTask) {
+        if (notificationTaskRepository.findAllByChatId(notificationTask.getChatId()).contains(notificationTask)) {
             return false;
         }
         return true;
@@ -107,7 +95,7 @@ public class NotificationService {
         long chatId = update.message().chat().id();
         LocalDateTime today = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
         log.info(" метод getListOfAllNotification выполнился");
-        return notificationTaskRepository.findAll().stream().filter(n -> Objects.equals(n.getChatId(), chatId)).filter(n -> n.getDateToSend().truncatedTo(ChronoUnit.DAYS).equals(today)).collect(Collectors.toList());
+        return notificationTaskRepository.findAllByChatId(chatId).stream().filter(n -> Objects.equals(n.getChatId(), chatId)).filter(n -> n.getDateToSend().truncatedTo(ChronoUnit.DAYS).equals(today)).collect(Collectors.toList());
     }
 
 
@@ -135,7 +123,6 @@ public class NotificationService {
         Long chatId = update.message().chat().id();
 
 
-        Pattern pattern = Pattern.compile("([0-9\\.\\:\\s]{16})(\\s)([a-zA-Z0-9\\W+]+)");
         Matcher matcher = pattern.matcher(messageText);
         // check format of message
         if (matcher.matches()) {
@@ -161,15 +148,15 @@ public class NotificationService {
         LocalDateTime currentMoment = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         // get reminders and filter by date and time
 
-        return notificationTaskRepository.findAll().stream().filter(n -> n.getDateToSend().equals(currentMoment)).collect(Collectors.toList());
+        return notificationTaskRepository.findByDateToSendEquals(currentMoment);
+
     }
 
     public void deleteNotifications(Update update) {
         long idChat = update.message().chat().id();
 
-        List<NotificationTask> temporaryListNotifications = notificationTaskRepository.findAll().stream().filter(n -> Objects.equals(n.getChatId(), idChat)).collect(Collectors.toList());
+        Collection<NotificationTask> temporaryListNotifications = notificationTaskRepository.findAllByChatId(idChat);
         notificationTaskRepository.deleteAll();
-        notificationTaskRepository.saveAll(temporaryListNotifications);
 
     }
 

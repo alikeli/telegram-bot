@@ -1,2 +1,4 @@
 # Project exclude paths
 /telegram-bot/target/
+/.idea/
+/telegram-bot.iml/

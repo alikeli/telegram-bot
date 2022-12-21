@@ -18,16 +18,16 @@ public class NotificationTask {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long Id;
+    private long id;
     private long chatId;
     private String userName;
     private String message;
-    private LocalDateTime DateToSend;
+    private LocalDateTime dateToSend;
 
 
     @Override
     public String toString() {
-        return "NotificationTask{" + "Id=" + Id + ", chatId=" + chatId + ", userName='" + userName + '\'' + ", message='" + message + '\'' + ", DateToSend=" + DateToSend + '}';
+        return "NotificationTask{" + "Id=" + id + ", chatId=" + chatId + ", userName='" + userName + '\'' + ", message='" + message + '\'' + ", DateToSend=" + dateToSend + '}';
     }
 
     @Override
@@ -35,11 +35,11 @@ public class NotificationTask {
         if (this == o) return true;
         if (!(o instanceof NotificationTask)) return false;
         NotificationTask that = (NotificationTask) o;
-        return Objects.equals(chatId, that.chatId) && Objects.equals(message, that.message) && Objects.equals(DateToSend, that.DateToSend) && Objects.equals(userName, that.userName);
+        return Objects.equals(chatId, that.chatId) && Objects.equals(message, that.message) && Objects.equals(dateToSend, that.dateToSend) && Objects.equals(userName, that.userName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id, chatId, userName, message, DateToSend);
+        return Objects.hash(id, chatId, userName, message, dateToSend);
     }
 }
