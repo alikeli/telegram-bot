@@ -74,23 +74,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
-    @Scheduled(cron = "0 0/1 * * * *")
-    // once a minute
-    public int notifies() {
 
-        List<NotificationTask> notificationsList = notificationService.checkCurrentNotifications();
-
-        if (!notificationsList.isEmpty()) {
-            notificationService.makeNotification(notificationsList).forEach(n -> {
-
-                SendResponse response = telegramBot.execute(n);
-                System.out.println(response.isOk());
-                System.out.println(response.errorCode());
-            });
-            log.info("выполнился метод notifies");
-        }
-        return UpdatesListener.CONFIRMED_UPDATES_ALL;
-    }
 
 
 }
