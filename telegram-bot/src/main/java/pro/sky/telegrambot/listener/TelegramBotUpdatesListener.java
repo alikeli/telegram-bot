@@ -16,7 +16,8 @@ import java.util.List;
 @Service
 @Slf4j
 public class TelegramBotUpdatesListener implements UpdatesListener {
-    static final String HELP_TEXT = "Telegram-bot for remind about your homework.\n" + "The format is 01.01.2022 20:00 You have to do homework";
+    private static final String HELP_TEXT = "Telegram-bot for remind about your homework.\n" + "The format is 01.01.2022 20:00 You have to do homework";
+    private static final String DELETE_TEXT = "Tasks deleted";
     // private final NotificationTaskRepository notificationTaskRepository;  //проверить
 
     private final TelegramBot telegramBot;
@@ -44,7 +45,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             switch (messageText) {
                 case "/start":
-                    notificationService.registerUser(update.message());
+                    // notificationService.greetingUser(update);
                     notificationService.startCommandReceived(chatId, update.message().chat().firstName());
                     break;
                 case "/help":
@@ -53,13 +54,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 case "/tasks":
                     List<NotificationTask> notificationsList2 = notificationService.getListOfAllNotification(update);
                     notificationService.makeNotification(notificationsList2).forEach(n -> {
-                        SendResponse response2 = telegramBot.execute(n);
-                        System.out.println(response2.isOk());
-                        System.out.println(response2.errorCode());
+                        SendResponse response = telegramBot.execute(n);
+                        log.info("ответ успешно отправлен, {}", response.isOk());
+                        log.info("Код ошибки {}", response.errorCode());
                     });
                     break;
                 case "/deletemessage":
                     notificationService.deleteNotifications(update);
+                    notificationService.sendMessage(chatId, DELETE_TEXT);
                     break;
 
                 default:

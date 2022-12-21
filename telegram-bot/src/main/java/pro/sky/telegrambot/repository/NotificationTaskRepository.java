@@ -5,7 +5,12 @@ import pro.sky.telegrambot.entity.NotificationTask;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 public interface NotificationTaskRepository extends JpaRepository<NotificationTask, Long> {
-    Collection<NotificationTask> findAllByChatId(LocalDateTime localDateTime);
+    Collection<NotificationTask> findAllByChatId(long chatId);
+    List<NotificationTask> findByDateToSendEquals(LocalDateTime localDateTime);
+
+
+
 }
