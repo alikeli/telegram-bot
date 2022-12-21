@@ -18,7 +18,7 @@ import java.util.List;
 public class TelegramBotUpdatesListener implements UpdatesListener {
     private static final String HELP_TEXT = "Telegram-bot for remind about your homework.\n" + "The format is 01.01.2022 20:00 You have to do homework";
     private static final String DELETE_TEXT = "Tasks deleted";
-    // private final NotificationTaskRepository notificationTaskRepository;  //проверить
+
 
     private final TelegramBot telegramBot;
     private final NotificationService notificationService;
@@ -45,7 +45,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             switch (messageText) {
                 case "/start":
-                    // notificationService.greetingUser(update);
+
                     notificationService.startCommandReceived(chatId, update.message().chat().firstName());
                     break;
                 case "/help":

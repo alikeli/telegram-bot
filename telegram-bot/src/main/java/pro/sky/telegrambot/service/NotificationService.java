@@ -155,7 +155,7 @@ public class NotificationService {
     public void deleteNotifications(Update update) {
         long idChat = update.message().chat().id();
 
-        Collection<NotificationTask> temporaryListNotifications = notificationTaskRepository.findAllByChatId(idChat);
+        notificationTaskRepository.findAllByChatId(idChat);
         notificationTaskRepository.deleteAll();
 
     }
