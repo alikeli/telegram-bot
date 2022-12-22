@@ -10,6 +10,7 @@ import pro.sky.telegrambot.entity.NotificationTask;
 //import pro.sky.telegrambot.exeption.TextPatternDoesNotMatchException;
 import pro.sky.telegrambot.repository.NotificationTaskRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class NotificationService {
 
-    private TelegramBot telegramBot;
+    private final TelegramBot telegramBot;
     private final NotificationTaskRepository notificationTaskRepository;
 
 
@@ -35,7 +36,7 @@ public class NotificationService {
 
     }
 
-    Pattern pattern = Pattern.compile("([0-9\\.\\:\\s]{16})(\\s)([a-zA-Z0-9\\W+]+)");
+    private final Pattern pattern = Pattern.compile("([0-9\\.\\:\\s]{16})(\\s)([a-zA-Z0-9\\W+]+)");
 
     //response to /start command
     public void startCommandReceived(long chatId, String name) {
@@ -133,7 +134,6 @@ public class NotificationService {
             String message = matcher.group(3);
             notificationTask.setMessage(message);
             notificationTask.setChatId(chatId);
-            notificationTask.setId(messageId);
             notificationTask.setUserName(update.message().chat().username());
             return notificationTask;
         }
@@ -152,11 +152,14 @@ public class NotificationService {
 
     }
 
+
     public void deleteNotifications(Update update) {
         long idChat = update.message().chat().id();
 
-        notificationTaskRepository.findAllByChatId(idChat);
-        notificationTaskRepository.deleteAll();
+       notificationTaskRepository.deleteNotificationTasksByChatId(idChat);
+
+
+
 
     }
 
